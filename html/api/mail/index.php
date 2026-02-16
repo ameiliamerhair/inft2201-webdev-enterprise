@@ -6,4 +6,4 @@ echo "<p>PHP + Apache container is running.</p>";
 echo "<p>Next step: add REST endpoints + Composer + PHPUnit.</p>";
 echo "";
 
-phpinfo();
+// phpinfo();
