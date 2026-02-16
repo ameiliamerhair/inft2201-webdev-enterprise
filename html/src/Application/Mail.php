@@ -35,4 +35,9 @@ class Mail {
         $stmt = $this->pdo->prepare("DELETE FROM mail WHERE id = ?");
         $stmt->execute([$id]);
     }
+
+    public function updateMail(int $id, string $subject, string $body): bool {
+        $stmt = $this->pdo->prepare("UPDATE mail SET subject = ?, body = ? WHERE id = ?");
+        return $stmt->execute([$subject, $body, $id]);
+    }
 }

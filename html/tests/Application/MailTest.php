@@ -59,4 +59,15 @@ class MailTest extends TestCase {
         $item = $mail->getById($id);
         $this->assertFalse($item);
     }
+
+    // Update.
+    public function testUpdateMail() {
+        $mail = new Mail($this->pdo);
+        $id = $mail->createMail("Old subject", "Old body");
+        $result = $mail->updateMail($id, "New subject", "New body");
+        $this->assertTrue($result);
+        $updated = $mail->getById($id);
+        $this->assertEquals("New subject", $updated['subject']);
+        $this->assertEquals("New body", $updated['body']);
+    }
 }
