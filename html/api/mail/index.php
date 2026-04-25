@@ -54,7 +54,6 @@ if ($method === 'POST') {
 if ($method === 'PUT' && $id) {
     $data = json_decode(file_get_contents('php://input'), true);
 
-    // Make sure the request includes both subject and body
     if (!isset($data['subject'], $data['body'])) {
         $page->badRequest();
         exit;
