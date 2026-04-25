@@ -24,12 +24,12 @@ function loadMail(req, res, next) {
 // Requirements:
 // - Must be authenticated (JWT)
 // - Must satisfy canViewMail policy (admin OR owner)
-router.get("/:id",
+router.get(
+  "/:id",
   authenticateJWT,
   loadMail,
   authorize(canViewMail),
   (req, res) => {
-    // At this point, user is authenticated and authorized.
     res.json(req.mail);
   }
 );
