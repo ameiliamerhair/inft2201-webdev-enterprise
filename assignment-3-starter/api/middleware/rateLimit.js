@@ -5,16 +5,32 @@
 // - When exceeded, produce an error (429 Too Many Requests) via next(err).
 // - Include a Retry-After header in the final response (set that in errorHandler).
 
-const windowMs = (parseInt(process.env.RATE_LIMIT_WINDOW_SECONDS, 10) || 60) * 1000;
-const maxRequests = parseInt(process.env.RATE_LIMIT_MAX, 10) || 5;
+const store = {};
 
-const buckets = new Map();
-// shape: key -> { count, windowStart }
+module.exports = (req, res, next) => {
+  const key = req.ip;
+  const max = Number(process.env.RATE_LIMIT_MAX);
+  const windowSec = Number(process.env.RATE_LIMIT_WINDOW_SECONDS);
 
-module.exports = function rateLimit(req, res, next) {
-  // TODO: implement a simple rolling or fixed-window rate limiting strategy.
-  // - Decide on a key: IP-based (req.ip) OR token-based (req.user?.userId).
-  // - Track count within a time window.
-  // - On exceed, create a rate-limit error and pass to next(err).
+  const now = Date.now();
+
+  if (!store[key]) {
+    store[key] = [];
+  }
+
+  store[key] = store[key].filter(
+    t => now - t < windowSec * 1000
+  );
+
+  if (store[key].length >= max) {
+    return next({
+      statusCode: 429,
+      error: "RateLimitError",
+      message: "Too many requests",
+      retryAfter: windowSec
+    });
+  }
+
+  store[key].push(now);
   next();
 };
